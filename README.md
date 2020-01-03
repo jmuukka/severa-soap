@@ -26,7 +26,7 @@ let context =
         RemoteAddress = Connection.remoteAddress
     }
 
-[<Fact>]
+[&lt;Fact&gt;]
 let ``Get all customers`` () =
     let actual = Customer.getChangedCustomers invoke context None CustomerGetOptions.IncludeInactive
 
