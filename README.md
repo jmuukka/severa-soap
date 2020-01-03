@@ -8,6 +8,7 @@ This package contains F# client types and implementation of the API.
 
 ## Usage
 
+<pre>
 open Xunit
 open Mutex.Visma.Severa.SOAP.API
 
@@ -30,5 +31,6 @@ let ``Get all customers`` () =
     let actual = Customer.getChangedCustomers invoke context None CustomerGetOptions.IncludeInactive
 
     Assert.ok actual
+</pre>
 
 Copyright (c) Jarmo Muukka, Mutex Oy 2020
