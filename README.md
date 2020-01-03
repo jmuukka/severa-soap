@@ -4,7 +4,7 @@ Visma Severa is a project management SaaS product created by Visma Solutions Oy.
 
 Visma Severa has a SOAP API for accessing your own data.
 
-This package contains F# client types and implementation of the API.
+This package contains easy to use functions to access the Visma Severa implemented in F#.
 
 ## Usage
 
