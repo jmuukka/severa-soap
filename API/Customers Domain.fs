@@ -25,6 +25,12 @@ module Contact =
     let getChangedContacts invoke context since (options : ContactGetOptions) =
         getChangedContactsOfCustomer invoke context null since options
 
+    let getContactsByCommunicationMethodValue invoke context method value =
+        returnArray invoke context (fun client -> client.GetContactsByCommunicationMethodType(method, value))
+
+    let getContactsByEmailAddress invoke context value =
+        getContactsByCommunicationMethodValue invoke context CommunicationMethodType.EmailAddress value
+
     let get invoke context guid =
         returnSingle invoke context (fun client -> client.GetContactByGUID(guid))
 
@@ -52,28 +58,33 @@ module Customer =
         let options = int options
         returnArray invoke context (fun client -> client.GetCustomersChangedSince(since, options))
 
-    let getRange invoke context (options : CustomerGetOptions) first count (criteria : CustomerCriteria) =
+    let getSlice invoke context (options : CustomerGetOptions) first count (criteria : CustomerCriteria) =
         let options = int options
-        if criteria <> null && criteria.AccountGroupGuids = null then
-            // Fix the problem in Severa. It will crash when AccountGroupGuids is null.
+        let accountGroupGuidsWasNull = criteria <> null && criteria.AccountGroupGuids = null
+        if accountGroupGuidsWasNull then
+            // Fix a problem in Severa. Severa will crash when AccountGroupGuids is null.
             criteria.AccountGroupGuids <- [||]
-        returnArray invoke context (fun client -> client.GetAllCustomers(options, first, count, criteria))
+        let result = returnArray invoke context (fun client -> client.GetAllCustomers(options, first, count, criteria))
+        if accountGroupGuidsWasNull then
+            // Restore the criteria back to its original state.
+            criteria.AccountGroupGuids <- null
+        result
 
     let getAll invoke context (options : CustomerGetOptions) criteria =
         let maxCount = 100
-        let rec readRange first accumulated =
-            let res = getRange invoke context options first maxCount criteria
+        let rec getSliceRec first accumulatedEarlier =
+            let res = getSlice invoke context options first maxCount criteria
             match res with
             | Error _ ->
                 res
-            | Ok currentPage ->
-                let customers = Array.append accumulated currentPage
-                if currentPage.Length < maxCount then
-                    Ok customers
+            | Ok slice ->
+                let accumulated = Array.append accumulatedEarlier slice
+                if slice.Length < maxCount then
+                    Ok accumulated
                 else
-                    readRange (first + currentPage.Length) customers
+                    getSliceRec (first + slice.Length) accumulated
 
-        readRange 0 [||]
+        getSliceRec 0 [||]
 
     let get invoke context guid =
         returnSingle invoke context (fun client -> client.GetCustomerByGUID(guid))
