@@ -17,10 +17,13 @@ module Contact =
     let getContactsOfCustomer invoke context guid =
         returnArray invoke context (fun client -> client.GetContactsByAccountGUID(guid))
 
-    let getChangedContacts invoke context since (options : ContactGetOptions) =
+    let getChangedContactsOfCustomer invoke context guid since (options : ContactGetOptions) =
         let since = Option.toDateTime since
         let options = int options
-        returnArray invoke context (fun client -> client.GetContactsChangedSince(null, since, options))
+        returnArray invoke context (fun client -> client.GetContactsChangedSince(guid, since, options))
+
+    let getChangedContacts invoke context since (options : ContactGetOptions) =
+        getChangedContactsOfCustomer invoke context null since options
 
     let get invoke context guid =
         returnSingle invoke context (fun client -> client.GetContactByGUID(guid))
@@ -35,9 +38,9 @@ module Contact =
     let update invoke context contact =
         returnSingle invoke context (fun client -> client.UpdateContact(contact))
 
-    //let delete invoke context guid =
-    //    Severa.executeReturnSingle Factory.createContactClient invoke context (fun client -> client.DeleteContact(guid))
-    //    //|> mapFalseToError
+    let delete invoke context guid =
+        Severa.executeReturn Factory.createContactClient invoke context (fun client -> client.DeleteContact(guid))
+        |> Severa.mapFalseToGeneralError
 
 module Customer =
 

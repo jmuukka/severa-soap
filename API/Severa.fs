@@ -34,6 +34,17 @@ module Severa =
         | Ok v ->
             Ok (Some v)
 
+    let mapFalseToGeneralError res =
+        match res with
+        | Ok value ->
+            match value with
+            | true ->
+                Ok ()
+            | false ->
+                Error (General "The operation failed because the API returned false.")
+        | Error err ->
+            Error err
+
     let invoke client run =
         try
             run client
@@ -88,7 +99,7 @@ module Severa =
                                            client.Endpoint.Contract.Namespace,
                                            apiKey)
 
-    let executeReturn<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel> and 'ret : not struct> : Exec<'client, 'channel, 'ret> =
+    let executeReturn<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel>> : Exec<'client, 'channel, 'ret> =
         fun createClient invoke context run ->
             use client = createClient context
             use scope = createContextScope context.ApiKey client

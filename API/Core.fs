@@ -28,7 +28,7 @@ type ClientFactory<'client, 'channel when 'channel : not struct and 'client :> C
 type Invoke<'channel, 'ret> =
     'channel -> ('channel -> 'ret) -> Result<'ret, Failure>
 
-type Exec<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel> and 'ret : not struct> =
+type Exec<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel>> =
     ClientFactory<'client, 'channel>
         -> Invoke<'client, 'ret>
         -> Context
