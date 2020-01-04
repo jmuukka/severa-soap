@@ -8,7 +8,15 @@ let invoke = Severa.invoke
 let context = Severa.context ApiKey.load
 
 [<Fact>]
-let ``Get all customers`` () =
+let ``Get changed customers`` () =
     let actual = Customer.getChangedCustomers invoke context None CustomerGetOptions.IncludeInactive
+
+    Assert.ok actual
+
+[<Fact>]
+let ``Get all customers`` () =
+    let criteria = CustomerCriteria()
+
+    let actual = Customer.getAll invoke context CustomerGetOptions.IncludeInactive criteria
 
     Assert.ok actual

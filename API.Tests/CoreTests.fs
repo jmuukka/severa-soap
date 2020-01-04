@@ -46,7 +46,7 @@ let ``Execute multiple commands using a single client`` () =
     use client = Factory.createCurrencyClient context
     use scope = Severa.createContextScope context.ApiKey client
 
-    let actualArray = (Severa.invokeArray Severa.invoke) client (fun c -> c.GetCurrencies())
+    let actualArray = Severa.invoke client (fun c -> c.GetCurrencies())
     let actualSingle = Severa.invoke client (fun c -> c.GetCurrencyByIsoCode("EUR"))
 
     Assert.ok actualArray

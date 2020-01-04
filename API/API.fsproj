@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Mutex.Visma.Severa.SOAP.API</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.3</Version>
+    <Version>0.4</Version>
     <Authors>Jarmo Muukka, Mutex Oy</Authors>
     <Company>Mutex Oy</Company>
     <Product>Visma Severa SOAP API</Product>
@@ -13,7 +13,7 @@
     <Copyright>Copyright © Mutex Oy 2020</Copyright>
     <PackageProjectUrl>https://github.com/jmuukka/severa-soap</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jmuukka/severa-soap</RepositoryUrl>
-    <Description>This package contains easy to use functions to access the Visma Severa implemented in F#.</Description>
+    <Description>This package contains easy to use functions for accessing Visma Severa.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

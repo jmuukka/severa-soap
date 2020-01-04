@@ -12,6 +12,28 @@ module private Array =
 
 module Severa =
 
+    let mapNullToEntityNotFound res =
+        match res with
+        | Ok value ->
+            match value with
+            | null ->
+                Error EntityNotFound
+            | _ ->
+                res
+        | _ ->
+            res
+
+    let mapEntityNotFoundToNone res =
+        match res with
+        | Error err ->
+            match err with
+            | EntityNotFound
+                -> Ok None
+            | _
+                -> Error err
+        | Ok v ->
+            Ok (Some v)
+
     let invoke client run =
         try
             run client
@@ -61,10 +83,6 @@ module Severa =
 
         invokeRec 1 firstWaitTimeInSeconds
 
-    let invokeArray invoke client run =
-        invoke client run
-        |> Result.map Array.emptyWhenNull
-
     let createContextScope apiKey (client : ClientBase<'channel>) =
         new SeveraApiOperationContextScope(client.InnerChannel,
                                            client.Endpoint.Contract.Namespace,
@@ -76,36 +94,26 @@ module Severa =
             use scope = createContextScope context.ApiKey client
             invoke client run
 
-    let executeReturnSingle<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel> and 'ret : not struct> : Exec<'client, 'channel, 'ret> =
+    let executeReturnSingle<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel> and 'ret : not struct and 'ret : null> : Exec<'client, 'channel, 'ret> =
         fun createClient invoke context run ->
             executeReturn createClient invoke context run
+            |> mapNullToEntityNotFound
 
     let executeReturnArray<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel> and 'ret : not struct> : ExecArray<'client, 'channel, 'ret> =
         fun createClient invoke context run ->
-            executeReturn createClient (invokeArray invoke) context run
+            executeReturn createClient invoke context run
+            |> Result.map Array.emptyWhenNull
 
     let execute<'client, 'channel when 'channel : not struct and 'client :> ClientBase<'channel>> : Exec<'client, 'channel, unit> =
         fun createClient invoke context run ->
             executeReturn createClient invoke context run
 
-    let tryGet res =
-        match res with
-        | Ok v ->
-            match v with
-            | null ->
-                Ok None
-            | _ ->
-                Ok(Some v)
-        | Error err ->
-            match err with
-            | EntityNotFound
-                -> Ok None
-            | _
-                -> Error err
-
-    let context key =
+    /// <summary>Creates a Context value using an API key with default binding and remote address.</summary>
+    /// <param name="apiKey">The API key.</param>
+    /// <returns>A Context value.</returns>
+    let context apiKey =
         {
-            ApiKey = ApiKey key
+            ApiKey = ApiKey apiKey
             Binding = Connection.binding
             RemoteAddress = Connection.remoteAddress
         }
