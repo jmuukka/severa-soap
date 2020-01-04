@@ -29,7 +29,7 @@
     <Compile Include="Connection.fs" />
     <Compile Include="Severa.fs" />
     <Compile Include="Factory.fs" />
-    <Compile Include="API.fs" />
+    <Compile Include="Customers Domain.fs" />
   </ItemGroup>
 
   <ItemGroup>

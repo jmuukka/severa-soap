@@ -35,6 +35,10 @@ module Contact =
     let update invoke context contact =
         returnSingle invoke context (fun client -> client.UpdateContact(contact))
 
+    //let delete invoke context guid =
+    //    Severa.executeReturnSingle Factory.createContactClient invoke context (fun client -> client.DeleteContact(guid))
+    //    //|> mapFalseToError
+
 module Customer =
 
     let private returnArray = Severa.executeReturnArray Factory.createCustomerClient
