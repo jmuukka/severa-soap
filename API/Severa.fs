@@ -57,15 +57,15 @@ module Severa =
             | :? FaultException<EntityNotFoundFailure> ->
                 Error EntityNotFound
             | :? FaultException<ValidationFailure> as ex ->
-                Error (Validation ex.Message)
+                Error (Validation ex.Detail.Description)
             //| :? FaultException<QuotaLimitExceededException> ->
             //    Error QuotaLimitExceeded
             //| :? FaultException<TosNotApprovedException> ->
             //    Error TermsOfServiceNotApproved
             | :? FaultException<GeneralFailure> as ex ->
-                Error (General ex.Message)
+                Error (General ex.Detail.Description)
             | :? FaultException<SeveraApiFailure> as ex -> // this is an abstract base class in Severa. All uncaught failures will be caught in here.
-                Error (General ex.Message)
+                Error (General ex.Detail.Description)
             | ex ->
                 Error (Exception ex)
 
