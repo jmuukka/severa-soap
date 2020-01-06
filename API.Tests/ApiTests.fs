@@ -8,8 +8,11 @@ let invoke = Severa.invoke
 let context = Severa.context ApiKey.load
 
 [<Fact>]
-let ``Get changed customers`` () =
-    let actual = Customer.getChangedCustomers invoke context None CustomerGetOptions.IncludeInactive
+let ``Get customers changed within one week`` () =
+    let since = Some (System.DateTime.UtcNow.AddDays(-7.0))
+    let options = CustomerGetOptions.IncludeInactive
+    
+    let actual = Customer.getChangedCustomers invoke context since options
 
     Assert.ok actual
 
