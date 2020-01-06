@@ -23,7 +23,7 @@ let context = Severa.context "YOUR SEVERA SOAP API KEY"
 
 [&lt;Fact&gt;]
 let ``Get customers changed within one week`` () =
-    let since = Some DateTime.UtcNow.AddDays(-7)
+    let since = Some (System.DateTime.UtcNow.AddDays(-7.0))
     let options = CustomerGetOptions.IncludeInactive
     
     let actual = Customer.getChangedCustomers invoke context since options
