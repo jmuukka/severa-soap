@@ -19,15 +19,10 @@ open Mutex.Visma.Severa.SOAP.API
 // When the last retry fails then the function will return the Result with the latest failure.
 let invoke = Severa.invokeWithRetry 15 3 Severa.invoke
 
-let context =
-    {
-        ApiKey = ApiKey "YOUR SEVERA SOAP API KEY"
-        Binding = Connection.binding
-        RemoteAddress = Connection.remoteAddress
-    }
+let context = Severa.context "YOUR SEVERA SOAP API KEY"
 
 [&lt;Fact&gt;]
-let ``Get all customers`` () =
+let ``Get changed customers`` () =
     let actual = Customer.getChangedCustomers invoke context None CustomerGetOptions.IncludeInactive
 
     Assert.ok actual
