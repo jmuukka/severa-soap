@@ -22,8 +22,11 @@ let invoke = Severa.invokeWithRetry 15 3 Severa.invoke
 let context = Severa.context "YOUR SEVERA SOAP API KEY"
 
 [&lt;Fact&gt;]
-let ``Get changed customers`` () =
-    let actual = Customer.getChangedCustomers invoke context None CustomerGetOptions.IncludeInactive
+let ``Get customers changed within one week`` () =
+    let since = Some DateTime.UtcNow.AddDays(-7)
+    let options = CustomerGetOptions.IncludeInactive
+    
+    let actual = Customer.getChangedCustomers invoke context since options
 
     Assert.ok actual
 </pre>
