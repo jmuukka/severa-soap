@@ -30,15 +30,22 @@ module Factory =
     let createCurrencyClient context =
         new CurrencyClient(context.Binding, context.RemoteAddress)
 
+    // ----------------------------------------
+    // Users domain
+    // ----------------------------------------
+
+    let createAccessRightsClient context =
+        new AccessRightsClient(context.Binding, context.RemoteAddress)
+
+    let createEmploymentClient context =
+        new EmploymentClient(context.Binding, context.RemoteAddress)
+
     let createUserClient context =
         new UserClient(context.Binding, context.RemoteAddress)
 
     // ----------------------------------------
     // Customers domain
     // ----------------------------------------
-
-    let createAccessRightsClient context =
-        new AccessRightsClient(context.Binding, context.RemoteAddress)
 
     let createAccountClient context =
         new AccountClient(context.Binding, context.RemoteAddress)
@@ -130,7 +137,7 @@ module Factory =
         new TravelReimbursementStatusClient(context.Binding, context.RemoteAddress)
 
     // ----------------------------------------
-    // Expenses domain (other than work hours)
+    // Expenses and fees domain (other than work hours)
     // ----------------------------------------
 
     let createItemClient context =
@@ -139,9 +146,6 @@ module Factory =
     // ----------------------------------------
     // Work hours domain
     // ----------------------------------------
-
-    let createEmploymentClient context =
-        new EmploymentClient(context.Binding, context.RemoteAddress)
 
     let createHourEntryClient context =
         new HourEntryClient(context.Binding, context.RemoteAddress)
