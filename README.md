@@ -12,7 +12,7 @@ This package contains easy to use functions to access the Visma Severa implement
 open Xunit
 open Mutex.Visma.Severa.SOAP.API
 
-// Compose a new function to use retry logic.
+// Partially apply a function to use retry logic by baking in the parameters.
 // When Severa API fails then the operation will be retried after 15 seconds.
 // The operation will be retried maximum of 3 times.
 // The delay is doubled after each retry therefore the retry interval is 15, 30, 60 seconds.
