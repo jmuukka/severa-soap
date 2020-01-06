@@ -12,14 +12,6 @@ let ok actual =
     | Ok _ -> ()
     | Error _ -> failwith "An Ok result was expected, but result was an Error."
 
-let entityNotFound actual = 
-    match actual with
-    | Ok _ -> failwith "An Error Failure.EntityNotFound was expected but result was Ok."
-    | Error err ->
-        match err with
-        | EntityNotFound -> ()
-        | _ -> failwith "An Error Failure.EntityNotFound was expected but result was an Error with another Failure case."
-
 let generalFailure actual = 
     match actual with
     | Ok _ -> failwith "An Error Failure.General was expected but result was Ok."

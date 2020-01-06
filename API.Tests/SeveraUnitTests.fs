@@ -9,7 +9,7 @@ let ``mapNullToEntityNotFound with null returns EntityNotFound`` () =
 
     let actual = Severa.mapNullToEntityNotFound result
 
-    Assert.entityNotFound actual
+    Assert.equals (Error EntityNotFound) actual
 
 [<Fact>]
 let ``mapNullToEntityNotFound with value returns Ok value`` () =
