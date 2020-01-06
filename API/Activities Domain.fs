@@ -109,11 +109,11 @@ module ActivityType =
         get invoke context guid
         |> Severa.mapEntityNotFoundToNone
 
-    let add invoke context activity =
-        returnSingle invoke context (fun client -> client.AddNewActivityType(activity))
+    let add invoke context activityType =
+        returnSingle invoke context (fun client -> client.AddNewActivityType(activityType))
 
-    let update invoke context activity =
-        returnSingle invoke context (fun client -> client.UpdateActivityType(activity))
+    let update invoke context activityType =
+        returnSingle invoke context (fun client -> client.UpdateActivityType(activityType))
 
     let delete invoke context guid =
         returnBool invoke context (fun client -> client.DeleteActivityType(guid))
