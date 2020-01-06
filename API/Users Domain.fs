@@ -85,7 +85,7 @@ module Employment =
     let update invoke context employment =
         returnSingle invoke context (fun client -> client.UpdateEmployment(employment))
 
-    let deleyte invoke context guid =
+    let delete invoke context guid =
         returnBool invoke context (fun client -> client.DeleteEmployment(guid))
         |> Severa.mapFalseToGeneralError
         |> Result.map (fun _ -> ())
