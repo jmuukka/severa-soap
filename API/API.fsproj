@@ -30,6 +30,7 @@
     <Compile Include="Severa.fs" />
     <Compile Include="Factory.fs" />
     <Compile Include="Customers Domain.fs" />
+    <Compile Include="Activities Domain.fs" />
   </ItemGroup>
 
   <ItemGroup>
