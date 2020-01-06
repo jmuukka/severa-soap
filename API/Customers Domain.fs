@@ -47,6 +47,7 @@ module Contact =
     let delete invoke context guid =
         Severa.executeReturn Factory.createContactClient invoke context (fun client -> client.DeleteContact(guid))
         |> Severa.mapFalseToGeneralError
+        |> Result.map (fun _ -> ())
 
 module Customer =
 

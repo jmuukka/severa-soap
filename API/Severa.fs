@@ -31,19 +31,26 @@ module Severa =
                 -> Ok None
             | _
                 -> Error err
-        | Ok v ->
-            Ok (Some v)
+        | Ok value ->
+            Ok (Some value)
 
     let mapFalseToGeneralError res =
         match res with
         | Ok value ->
             match value with
             | true ->
-                Ok ()
+                Ok value
             | false ->
                 Error (General "The operation failed because the API returned false.")
         | Error err ->
             Error err
+
+    //let mapToUnit res =
+    //    match res with
+    //    | Ok _ ->
+    //        Ok ()
+    //    | Error err ->
+    //        Error err
 
     let invoke client run =
         try

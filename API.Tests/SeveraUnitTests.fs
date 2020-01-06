@@ -55,13 +55,12 @@ let ``mapEntityNotFoundToNone with Ok value returns Ok Some value`` () =
     Assert.equals expected actual
 
 [<Fact>]
-let ``mapFalseToGeneralError with Ok true returns Ok unit`` () =
+let ``mapFalseToGeneralError with Ok true returns Ok true`` () =
     let result = Ok true
 
     let actual = Severa.mapFalseToGeneralError result
 
-    let expected : Result<unit, Failure> = Ok ()
-    Assert.equals expected actual
+    Assert.equals result actual
 
 [<Fact>]
 let ``mapFalseToGeneralError with Ok false returns General Error`` () =
@@ -77,7 +76,7 @@ let ``mapFalseToGeneralError with Authentication Error returns Authentication Er
 
     let actual = Severa.mapFalseToGeneralError result
 
-    let expected : Result<unit, Failure> = Error Authentication
+    let expected : Result<bool, Failure> = Error Authentication
     Assert.equals expected actual
 
 type Client = {
