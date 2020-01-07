@@ -7,4 +7,4 @@ module internal Option =
     let toDateTime since =
         match since with
         | Some value -> value
-        | Option.None -> DateTime(2000, 1, 1)
+        | None -> DateTime(2000, 1, 1)
