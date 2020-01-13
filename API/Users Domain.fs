@@ -63,14 +63,13 @@ module User =
         |> Severa.mapFalseToGeneralError
         |> Result.map (fun _ -> ())
 
+    let getEmployments invoke context guid =
+        Severa.executeReturnArray Factory.createEmploymentClient invoke context (fun client -> client.GetEmploymentsByUserGUID(guid))
+
 module Employment =
 
-    let private returnArray = Severa.executeReturnArray Factory.createEmploymentClient
     let private returnSingle = Severa.executeReturnSingle Factory.createEmploymentClient
     let private returnBool = Severa.executeReturn Factory.createEmploymentClient
-
-    let getEmploymentsOfUser invoke context guid =
-        returnArray invoke context (fun client -> client.GetEmploymentsByUserGUID(guid))
 
     let get invoke context guid =
         returnSingle invoke context (fun client -> client.GetEmploymentByGUID(guid))
