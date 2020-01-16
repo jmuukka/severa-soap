@@ -12,46 +12,6 @@ module private Array =
 
 module Severa =
 
-    let mapNullToEntityNotFound res =
-        match res with
-        | Ok value ->
-            match value with
-            | null ->
-                Error EntityNotFound
-            | _ ->
-                res
-        | _ ->
-            res
-
-    let mapEntityNotFoundToNone res =
-        match res with
-        | Error err ->
-            match err with
-            | EntityNotFound
-                -> Ok None
-            | _
-                -> Error err
-        | Ok value ->
-            Ok (Some value)
-
-    let mapFalseToGeneralError res =
-        match res with
-        | Ok value ->
-            match value with
-            | true ->
-                Ok value
-            | false ->
-                Error (General "The operation failed because the API returned false.")
-        | Error err ->
-            Error err
-
-    //let mapToUnit res =
-    //    match res with
-    //    | Ok _ ->
-    //        Ok ()
-    //    | Error err ->
-    //        Error err
-
     let invoke client run =
         try
             run client
@@ -77,7 +37,7 @@ module Severa =
                 Error (Exception ex)
 
     let invokeWithRetry firstWaitTimeInSeconds maxRetryCount invoke client run =
-        let rec invokeRec tryCount nextTimeout =
+        let rec invokeRec tryCount waitTimeInSeconds =
             match invoke client run with
             | Ok v ->
                 Ok v
@@ -96,8 +56,8 @@ module Severa =
                     if tryCount >= maxRetryCount then
                         Error err
                     else
-                        Thread.Sleep (nextTimeout * 1000)
-                        invokeRec (tryCount + 1) (nextTimeout * 2)
+                        Thread.Sleep (waitTimeInSeconds * 1000)
+                        invokeRec (tryCount + 1) (waitTimeInSeconds * 2)
 
         invokeRec 1 firstWaitTimeInSeconds
 
@@ -115,7 +75,7 @@ module Severa =
     let executeReturnSingle<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel> and 'ret : not struct and 'ret : null> : Exec<'client, 'channel, 'ret> =
         fun createClient invoke context run ->
             executeReturn createClient invoke context run
-            |> mapNullToEntityNotFound
+            |> Result.mapNullToEntityNotFound
 
     let executeReturnArray<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel> and 'ret : not struct> : ExecArray<'client, 'channel, 'ret> =
         fun createClient invoke context run ->

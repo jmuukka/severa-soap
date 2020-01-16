@@ -26,10 +26,10 @@
 
   <ItemGroup>
     <Compile Include="Core.fs" />
+    <Compile Include="Common.fs" />
     <Compile Include="Connection.fs" />
     <Compile Include="Severa.fs" />
     <Compile Include="Factory.fs" />
-    <Compile Include="Common.fs" />
     <Compile Include="Users Domain.fs" />
     <Compile Include="Customers Domain.fs" />
     <Compile Include="Activities Domain.fs" />

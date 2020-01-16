@@ -38,7 +38,7 @@ module Activity =
 
     let tryGet invoke context guid =
         get invoke context guid
-        |> Severa.mapEntityNotFoundToNone
+        |> Result.mapEntityNotFoundToNone
 
     let add invoke context activity =
         returnSingle invoke context (fun client -> client.AddNewActivity(activity))
@@ -48,8 +48,8 @@ module Activity =
 
     let delete invoke context guid =
         returnBool invoke context (fun client -> client.DeleteActivity(guid))
-        |> Severa.mapFalseToGeneralError
-        |> Result.map (fun _ -> ())
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
 
     let getParticipants invoke context guid =
         returnParticipantArray invoke context (fun client -> client.GetAllActivityParticipants(guid))
@@ -65,33 +65,33 @@ module Activity =
 
     let addUserParticipant invoke context activityGuid userGuid (memberStatus : MemberStatus) =
         returnBool invoke context (fun client -> client.AddNewActivityUserParticipant(activityGuid, userGuid, byte memberStatus))
-        |> Severa.mapFalseToGeneralError
-        |> Result.map (fun _ -> ())
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
 
     let addContactParticipant invoke context activityGuid contactGuid =
         returnBool invoke context (fun client -> client.AddNewActivityContactParticipant(activityGuid, contactGuid))
-        |> Severa.mapFalseToGeneralError
-        |> Result.map (fun _ -> ())
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
 
     let addResourceParticipant invoke context activityGuid resourceGuid =
         returnBool invoke context (fun client -> client.AddNewActivityResourceParticipant(activityGuid, resourceGuid))
-        |> Severa.mapFalseToGeneralError
-        |> Result.map (fun _ -> ())
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
 
     let removeUserParticipant invoke context activityGuid userGuid =
         returnBool invoke context (fun client -> client.RemoveActivityUserParticipant(activityGuid, userGuid))
-        |> Severa.mapFalseToGeneralError
-        |> Result.map (fun _ -> ())
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
 
     let removeContactParticipant invoke context activityGuid contactGuid =
         returnBool invoke context (fun client -> client.RemoveActivityContactParticipant(activityGuid, contactGuid))
-        |> Severa.mapFalseToGeneralError
-        |> Result.map (fun _ -> ())
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
 
     let removeResourceParticipant invoke context activityGuid resourceGuid =
         returnBool invoke context (fun client -> client.RemoveActivityResourceParticipant(activityGuid, resourceGuid))
-        |> Severa.mapFalseToGeneralError
-        |> Result.map (fun _ -> ())
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
 
 module ActivityType =
 
@@ -107,7 +107,7 @@ module ActivityType =
 
     let tryGet invoke context guid =
         get invoke context guid
-        |> Severa.mapEntityNotFoundToNone
+        |> Result.mapEntityNotFoundToNone
 
     let add invoke context activityType =
         returnSingle invoke context (fun client -> client.AddNewActivityType(activityType))
@@ -117,5 +117,5 @@ module ActivityType =
 
     let delete invoke context guid =
         returnBool invoke context (fun client -> client.DeleteActivityType(guid))
-        |> Severa.mapFalseToGeneralError
-        |> Result.map (fun _ -> ())
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
