@@ -12,11 +12,16 @@ module Connection =
         let maxSize = 500 * MiB
         binding.MaxReceivedMessageSize <- int64 maxSize
         binding.ReaderQuotas.MaxStringContentLength <- maxSize
-        binding.ReceiveTimeout <- new TimeSpan(0, 5, 0)
-        binding.SendTimeout <- new TimeSpan(0, 3, 0)
+        binding.ReceiveTimeout <- TimeSpan(0, 5, 0)
+        binding.SendTimeout <- TimeSpan(0, 3, 0)
         binding
 
-    let remoteAddress =
-        "https://sync.severa.com/webservice/S3/API.svc"
+    let remoteAddress uriString =
+        uriString
         |> Uri
         |> EndpointAddress
+
+    /// The endpoint address of Severa SOAP API.
+    let severaRemoteAddress =
+        "https://sync.severa.com/webservice/S3/API.svc"
+        |> remoteAddress

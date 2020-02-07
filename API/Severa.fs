@@ -93,5 +93,5 @@ module Severa =
         {
             ApiKey = ApiKey apiKey
             Binding = Connection.binding
-            RemoteAddress = Connection.remoteAddress
+            RemoteAddress = Connection.severaRemoteAddress
         }

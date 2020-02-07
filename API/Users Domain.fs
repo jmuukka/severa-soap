@@ -6,21 +6,21 @@ module User =
     let private returnSingle = Severa.executeReturnSingle Factory.createUserClient
     let private returnBool = Severa.executeReturn Factory.createUserClient
 
-    let getAllInBusinessUnit invoke context guid includeInactive =
-        returnArray invoke context (fun client -> client.GetAllUsers(guid, includeInactive))
+    let internal getUsersInBusinessUnit invoke context businessUnitGuid includeInactive =
+        returnArray invoke context (fun client -> client.GetAllUsers(businessUnitGuid, includeInactive))
 
     let getAllActive invoke context =
-        getAllInBusinessUnit invoke context null false
+        getUsersInBusinessUnit invoke context null false
 
     let getAll invoke context =
-        getAllInBusinessUnit invoke context null true
+        getUsersInBusinessUnit invoke context null true
 
     let getMany invoke context guids =
         returnArray invoke context (fun client -> client.GetUsersByGUIDs(guids))
 
-    let getChangedUsersInBusinessUnit invoke context guid since (options : UserGetOptions) =
+    let internal getChangedUsersInBusinessUnit invoke context businessUnitGuid since (options : UserGetOptions) =
         let since = Option.toDateTime since
-        returnArray invoke context (fun client -> client.GetUsersChangedSince(guid, since, int options))
+        returnArray invoke context (fun client -> client.GetUsersChangedSince(businessUnitGuid, since, int options))
 
     let getChangedUsers invoke context since options =
         getChangedUsersInBusinessUnit invoke context null since options 

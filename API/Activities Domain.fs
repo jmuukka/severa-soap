@@ -24,7 +24,7 @@ module Activity =
     let getInstances invoke context userGuid startsAfter startsBefore endsAfter endsBefore activityTypeGuid customerGuid projectGuid firstRow maxRows =
         returnArray invoke context (fun client -> client.GetActivityInstances(userGuid, startsAfter, startsBefore, endsAfter, endsBefore, activityTypeGuid, customerGuid, projectGuid, firstRow, maxRows))
 
-    let getAllByCriteria invoke context startDate endDate activityCategory businessUnitGuid =
+    let getByCriteria invoke context startDate endDate activityCategory businessUnitGuid =
         let activityCategory =
             match activityCategory with
             | None ->
