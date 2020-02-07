@@ -99,20 +99,20 @@ module ReimbursedWorkHour =
     let private returnArray = Severa.executeReturnArray Factory.createHourEntryClient
     let private returnSingle = Severa.executeReturnSingle Factory.createHourEntryClient
 
-    //let internal getReimbursed invoke context businessUnitGuid startDate endDate belongTo =
+    //let internal getReimbursed invoke context businessUnitGuid startDate endDate belongsTo =
     //    let startDate = Option.toNullableDateTime startDate
     //    let endDate = Option.toNullableDateTime endDate
     //    let inCreditNote =
-    //        match belongTo with
+    //        match belongsTo with
     //        | InvoicesAndCreditNotes -> Nullable<bool>()
     //        | Invoices -> Nullable<bool>(false)
     //        | CreditNotes -> Nullable<bool>(true)
     //    returnArray invoke context (fun client -> client.GetReimbursedHourEntriesByDate(businessUnitGuid, startDate, endDate, inCreditNote))
 
-    let getChanged invoke context startDate belongTo =
+    let getChanged invoke context startDate belongsTo =
         let startDate = Option.toDateTime startDate
         let inCreditNote =
-            match belongTo with
+            match belongsTo with
             | InvoicesAndCreditNotes -> Nullable<bool>()
             | Invoices -> Nullable<bool>(false)
             | CreditNotes -> Nullable<bool>(true)

@@ -33,6 +33,7 @@
     <Compile Include="Users Domain.fs" />
     <Compile Include="Organization Domain.fs" />
     <Compile Include="Customers Domain.fs" />
+    <Compile Include="Projects Domain.fs" />
     <Compile Include="Activities Domain.fs" />
     <Compile Include="Work hours Domain.fs" />
   </ItemGroup>

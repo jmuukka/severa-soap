@@ -1,5 +1,32 @@
 ﻿namespace Mutex.Visma.Severa.SOAP.API
 
+module Employment =
+
+    let private returnArray = Severa.executeReturnArray Factory.createEmploymentClient
+    let private returnSingle = Severa.executeReturnSingle Factory.createEmploymentClient
+    let private returnBool = Severa.executeReturn Factory.createEmploymentClient
+
+    let internal getByUser invoke context userGuid =
+        returnArray invoke context (fun client -> client.GetEmploymentsByUserGUID(userGuid))
+
+    let get invoke context guid =
+        returnSingle invoke context (fun client -> client.GetEmploymentByGUID(guid))
+
+    let tryGet invoke context guid =
+        get invoke context guid
+        |> Result.mapEntityNotFoundToNone
+
+    let add invoke context employment =
+        returnSingle invoke context (fun client -> client.AddNewEmployment(employment))
+
+    let update invoke context employment =
+        returnSingle invoke context (fun client -> client.UpdateEmployment(employment))
+
+    let delete invoke context guid =
+        returnBool invoke context (fun client -> client.DeleteEmployment(guid))
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
+
 module User =
 
     let private returnArray = Severa.executeReturnArray Factory.createUserClient
@@ -62,28 +89,7 @@ module User =
         |> Result.mapFalseToGeneralError
         |> Result.mapToUnit
 
+    // Employments of user
+
     let getEmployments invoke context guid =
-        Severa.executeReturnArray Factory.createEmploymentClient invoke context (fun client -> client.GetEmploymentsByUserGUID(guid))
-
-module Employment =
-
-    let private returnSingle = Severa.executeReturnSingle Factory.createEmploymentClient
-    let private returnBool = Severa.executeReturn Factory.createEmploymentClient
-
-    let get invoke context guid =
-        returnSingle invoke context (fun client -> client.GetEmploymentByGUID(guid))
-
-    let tryGet invoke context guid =
-        get invoke context guid
-        |> Result.mapEntityNotFoundToNone
-
-    let add invoke context employment =
-        returnSingle invoke context (fun client -> client.AddNewEmployment(employment))
-
-    let update invoke context employment =
-        returnSingle invoke context (fun client -> client.UpdateEmployment(employment))
-
-    let delete invoke context guid =
-        returnBool invoke context (fun client -> client.DeleteEmployment(guid))
-        |> Result.mapFalseToGeneralError
-        |> Result.mapToUnit
+        Employment.getByUser invoke context guid
