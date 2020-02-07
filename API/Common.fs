@@ -9,6 +9,11 @@ module internal Option =
         | Some value -> value
         | None -> DateTime(2000, 1, 1)
 
+    let toNullableDateTime since =
+        match since with
+        | Some value -> value
+        | None -> Nullable<DateTime>()
+
 module Result =
 
     let mapNullToEntityNotFound res =

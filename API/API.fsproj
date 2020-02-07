@@ -34,6 +34,7 @@
     <Compile Include="Organization Domain.fs" />
     <Compile Include="Customers Domain.fs" />
     <Compile Include="Activities Domain.fs" />
+    <Compile Include="Work hours Domain.fs" />
   </ItemGroup>
 
   <ItemGroup>

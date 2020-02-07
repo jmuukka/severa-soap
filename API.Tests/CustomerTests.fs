@@ -1,11 +1,7 @@
-module Mutex.Visma.Severa.SOAP.API.ApiTests
+module CustomerTests
 
 open Xunit
 open Mutex.Visma.Severa.SOAP.API
-
-let invoke = Severa.invoke
-
-let context = Severa.context ApiKey.load
 
 [<Fact>]
 let ``Get customers changed within one week`` () =
