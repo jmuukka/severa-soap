@@ -1,4 +1,4 @@
-module Mutex.Visma.Severa.SOAP.API.ResultUnitTests
+module ResultUnitTests
 
 open Xunit
 open Mutex.Visma.Severa.SOAP.API

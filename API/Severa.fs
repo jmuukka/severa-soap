@@ -1,90 +1,78 @@
 ﻿namespace Mutex.Visma.Severa.SOAP.API
 
 open System.ServiceModel
-open System.Threading
-
-module private Array =
-
-    let emptyWhenNull arr =
-        match arr with
-        | null -> [||]
-        | _ -> arr
 
 module Severa =
 
-    let invoke client run =
-        try
-            run client
-            |> Ok
-        with
-            | :? FaultException<AuthenticationFailure> ->
-                Error Authentication
-            | :? FaultException<NoPermissionFailure> ->
-                Error Permission
-            | :? FaultException<EntityNotFoundFailure> ->
-                Error EntityNotFound
-            | :? FaultException<ValidationFailure> as ex ->
-                Error (Validation ex.Detail.Description)
-            //| :? FaultException<QuotaLimitExceededException> ->
-            //    Error QuotaLimitExceeded
-            //| :? FaultException<TosNotApprovedException> ->
-            //    Error TermsOfServiceNotApproved
-            | :? FaultException<GeneralFailure> as ex ->
-                Error (General ex.Detail.Description)
-            | :? FaultException<SeveraApiFailure> as ex -> // this is an abstract base class in Severa. All uncaught failures will be caught in here.
-                Error (General ex.Detail.Description)
-            | ex ->
-                Error (Exception ex)
+    let getArray<'client, 'channel, 'ret
+                  when 'channel : not struct
+                   and 'client :> ClientBase<'channel>
+                   and 'ret : not struct>
+            invoke
+            context
+            (command : ArrayCommand<'client, 'channel, 'ret>) =
+        Soap.executeReturnArray command.CreateClient invoke context command.RequestArray
 
-    let invokeWithRetry firstWaitTimeInSeconds maxRetryCount invoke client run =
-        let rec invokeRec tryCount waitTimeInSeconds =
-            match invoke client run with
-            | Ok v ->
-                Ok v
-            | Error err ->
-                match err with
-                | Authentication
-                | Permission
-                | EntityNotFound
-                | Validation _
-                | General _ ->
-                    // These are expected to fail in the near future.
-                    Error err
-                | Exception _ ->
-                    // This error may be temporary so we can retry
-                    // or return the latest error.
-                    if tryCount >= maxRetryCount then
-                        Error err
-                    else
-                        Thread.Sleep (waitTimeInSeconds * 1000)
-                        invokeRec (tryCount + 1) (waitTimeInSeconds * 2)
+    let getPaged<'client, 'channel, 'ret
+                  when 'channel : not struct
+                   and 'client :> ClientBase<'channel>
+                   and 'ret : not struct>
+            invoke
+            context
+            (command : PagedCommand<'client, 'channel, 'ret>) =
+        let maxCount = command.PageSize
+        let rec getPageRec first accumulatedEarlier =
+            let result = Soap.executeReturnArray command.CreateClient invoke context (fun client -> command.Request client first maxCount)
+            match result with
+            | Error _ ->
+                result
+            | Ok page ->
+                let accumulated = Array.append accumulatedEarlier page
+                if page.Length < maxCount then
+                    Ok accumulated
+                else
+                    getPageRec (first + page.Length) accumulated
 
-        invokeRec 1 firstWaitTimeInSeconds
+        getPageRec 0 [||]
 
-    let createContextScope apiKey (client : ClientBase<'channel>) =
-        new SeveraApiOperationContextScope(client.InnerChannel,
-                                           client.Endpoint.Contract.Namespace,
-                                           apiKey)
+    let get<'client, 'channel, 'ret
+             when 'channel : not struct
+              and 'client :> ClientBase<'channel>
+              and 'ret : not struct
+              and 'ret : null>
+            invoke
+            context
+            (command : Command<'client, 'channel, 'ret>) =
+        Soap.executeReturnSingle command.CreateClient invoke context command.Request
 
-    let executeReturn<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel>> : Exec<'client, 'channel, 'ret> =
-        fun createClient invoke context run ->
-            use client = createClient context
-            use scope = createContextScope context.ApiKey client
-            invoke client run
+    let tryGet<'client, 'channel, 'ret
+                when 'channel : not struct
+                 and 'client :> ClientBase<'channel>
+                 and 'ret : not struct
+                 and 'ret : null>
+            invoke
+            context
+            (command : Command<'client, 'channel, 'ret>) =
+        get invoke context command
+        |> Result.mapEntityNotFoundToNone
 
-    let executeReturnSingle<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel> and 'ret : not struct and 'ret : null> : Exec<'client, 'channel, 'ret> =
-        fun createClient invoke context run ->
-            executeReturn createClient invoke context run
-            |> Result.mapNullToEntityNotFound
+    let exec<'client, 'channel, 'ret
+              when 'channel : not struct
+               and 'client :> ClientBase<'channel>>
+            invoke
+            context
+            (command : Command<'client, 'channel, 'ret>) =
+        Soap.executeReturn command.CreateClient invoke context command.Request
 
-    let executeReturnArray<'client, 'channel, 'ret when 'channel : not struct and 'client :> ClientBase<'channel> and 'ret : not struct> : ExecArray<'client, 'channel, 'ret> =
-        fun createClient invoke context run ->
-            executeReturn createClient invoke context run
-            |> Result.map Array.emptyWhenNull
-
-    let execute<'client, 'channel when 'channel : not struct and 'client :> ClientBase<'channel>> : Exec<'client, 'channel, unit> =
-        fun createClient invoke context run ->
-            executeReturn createClient invoke context run
+    let delete<'client, 'channel
+                when 'channel : not struct
+                 and 'client :> ClientBase<'channel>>
+            invoke
+            context
+            (command : Command<'client, 'channel, bool>) =
+        exec<'client, 'channel, bool> invoke context command
+        |> Result.mapFalseToGeneralError
+        |> Result.mapToUnit
 
     /// <summary>Creates a Context value using an API key with default binding and remote address.</summary>
     /// <param name="apiKey">The API key.</param>

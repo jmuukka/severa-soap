@@ -7,6 +7,14 @@ let equals expected actual =
     | true -> ()
     | false -> failwith "Values are different."
 
+let valueEquals expected actual = 
+    match actual with
+    | Ok value ->
+        equals expected value
+    | Error err ->
+        let msg = sprintf "Expected %O but got %O" expected err
+        failwith msg
+
 let ok actual = 
     match actual with
     | Ok _ -> ()

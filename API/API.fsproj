@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Mutex.Visma.Severa.SOAP.API</AssemblyName>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Version>0.4</Version>
     <Authors>Jarmo Muukka, Mutex Oy</Authors>
     <Company>Mutex Oy</Company>
@@ -25,29 +25,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\severa-soap\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md" />
     <Compile Include="Core.fs" />
     <Compile Include="Common.fs" />
-    <Compile Include="Connection.fs" />
-    <Compile Include="Severa.fs" />
+    <Compile Include="Commands.fs" />
     <Compile Include="Factory.fs" />
-    <Compile Include="Users Domain.fs" />
-    <Compile Include="Organization Domain.fs" />
-    <Compile Include="Customers Domain.fs" />
-    <Compile Include="Projects Domain.fs" />
-    <Compile Include="Activities Domain.fs" />
-    <Compile Include="Work hours Domain.fs" />
+    <Compile Include="Domain Modules\Internal modules.fs" />
+    <Compile Include="Domain Modules\Activities Domain.fs" />
+    <Compile Include="Domain Modules\Customers Domain.fs" />
+    <Compile Include="Domain Modules\Organization Domain.fs" />
+    <Compile Include="Domain Modules\Projects Domain.fs" />
+    <Compile Include="Domain Modules\Users Domain.fs" />
+    <Compile Include="Domain Modules\Work hours Domain.fs" />
+    <Compile Include="SoapTypes.fs" />
+    <Compile Include="Soap.fsi" />
+    <Compile Include="Soap.fs" />
+    <Compile Include="Connection.fs" />
+    <Compile Include="Severa.fsi" />
+    <Compile Include="Severa.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Mutex.Visma.Severa.SOAP.API.Types" Version="1.0.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\severa-soap\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 
 </Project>
