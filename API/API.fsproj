@@ -37,6 +37,7 @@
     <Compile Include="Domain Modules\Internal modules.fs" />
     <Compile Include="Domain Modules\Activities Domain.fs" />
     <Compile Include="Domain Modules\Customers Domain.fs" />
+    <Compile Include="Domain Modules\Internationalization Domain.fs" />
     <Compile Include="Domain Modules\Organization Domain.fs" />
     <Compile Include="Domain Modules\Projects Domain.fs" />
     <Compile Include="Domain Modules\Users Domain.fs" />

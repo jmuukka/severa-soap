@@ -33,3 +33,16 @@ module BusinessUnit =
 
     //let getUsers guid =
     //    User.getUsersInBusinessUnit guid true
+
+module CurrencyRate =
+
+    let private createClient = Factory.createCurrencyClient
+
+    let getAll =
+        Command.forArrayReq createClient (fun client -> client.GetCurrencies())
+
+    let get guid =
+        Command.forReq createClient (fun client -> client.GetCurrencyByGUID(guid))
+
+    let getByCode code =
+        Command.forReq createClient (fun client -> client.GetCurrencyByIsoCode(code))
