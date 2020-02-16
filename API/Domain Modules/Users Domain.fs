@@ -1,5 +1,37 @@
 ﻿namespace Mutex.Visma.Severa.SOAP.API
 
+module AccessRightsProfile =
+
+    let private createClient = Factory.createAccessRightsClient
+
+    let getAll =
+        Command.forArrayReq createClient (fun client -> client.GetAllAccessRightsProfiles())
+
+    let getUsers guid =
+        Command.forArrayReq createClient (fun client -> client.GetUsersByAccessRightsProfileGUID(guid))
+
+    let get guid =
+        Command.forReq createClient (fun client -> client.GetAccessRightsProfileByGUID(guid))
+
+    let add profile =
+        Command.forReq createClient (fun client -> client.AddNewAccessRightsProfile(profile))
+
+    let update profile =
+        Command.forReq createClient (fun client -> client.UpdateAccessRightsProfile(profile))
+
+    let delete guid =
+        Command.forReq createClient (fun client -> client.DeleteAccessRightsProfileByGUID(guid))
+
+module UserRights =
+
+    let private createClient = Factory.createAccessRightsClient
+
+    let get guid =
+        Command.forReq createClient (fun client -> client.GetUserRightsByUserGUID(guid))
+
+    let update guid userRights =
+        Command.forReq createClient (fun client -> client.UpdateUserRightsByUserGUID(guid, userRights))
+
 module Employment =
 
     let private createClient = Factory.createEmploymentClient
@@ -34,6 +66,9 @@ module User =
 
     let getMany guids =
         Command.forArrayReq createClient (fun client -> client.GetUsersByGUIDs(guids))
+
+    let getByKeywords businessUnitGuid userKeywords =
+        Command.forArrayReq createClient (fun client -> client.GetUsersByUserKeywords(businessUnitGuid, userKeywords))
 
     let internal getUsersChangedInBusinessUnit businessUnitGuid since (options : UserGetOptions) =
         let since = Option.toDateTime since
