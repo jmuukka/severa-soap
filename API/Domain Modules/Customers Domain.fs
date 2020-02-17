@@ -82,3 +82,109 @@ module Contact =
 
     let delete guid =
         Command.forReq createClient (fun client -> client.DeleteContact(guid))
+
+module Account =
+
+    let private createClient = Factory.createAccountClient
+
+    let add account company address contact =
+        Command.forReq createClient (fun client -> client.AddNewAccount(account, company, address, contact))
+
+    let get guid =
+        Command.forReq createClient (fun client -> client.GetAccountByGUID(guid))
+
+    let getByName name =
+        Command.forReq createClient (fun client -> client.GetAccountByName(name))
+
+    let getByNumber number =
+        Command.forReq createClient (fun client -> client.GetAccountByNumber(number))
+
+    let getByVatNumber vatNumber =
+        Command.forReq createClient (fun client -> client.GetAccountByVatNumber(vatNumber))
+
+    let getByCompany companyGuid =
+        Command.forArrayReq createClient (fun client -> client.GetAccountsByCompanyGUID(companyGuid))
+
+    let getByInsertDate startDate endDate =
+        let endDate = Option.toNullableDateTime endDate
+        Command.forArrayReq createClient (fun client -> client.GetAccountsByInsertDate(startDate, endDate))
+
+    let getChanged startDate (options : AccountGetOptions) =
+        Command.forArrayReq createClient (fun client -> client.GetAccountsChangedSince(startDate, int options))
+
+    let getChangedOpts startDate options =
+        Command.forArrayReq createClient (fun client -> client.GetAccountsChangedSinceOpts(startDate, options))
+
+    let getAll index count options =
+        Command.forArrayReq createClient (fun client -> client.GetAllAccounts(options, index, count))
+
+    let getHeadOfficeAddress guid =
+        Command.forReq createClient (fun client -> client.GetHeadOfficeAddressByAccountGUID(guid))
+
+    let update account =
+        Command.forReq createClient (fun client -> client.UpdateAccount(account))
+
+module AccountGroup =
+
+    let private createClient = Factory.createAccountGroupClient
+
+    let add accountGroup =
+        Command.forReq createClient (fun client -> client.AddNewAccountGroup(accountGroup))
+
+    let addMembersToAccount accountGuid accountGroupGuids =
+        Command.forReq createClient (fun client -> client.AddNewAccountGroupMembers(accountGuid, accountGroupGuids))
+
+    let getAll (options : AccountGroupGetOptions) =
+        Command.forArrayReq createClient (fun client -> client.GetAccountGroups(int options))
+
+    let getAllByAccount accountGuid (options : AccountGroupGetOptions) =
+        Command.forArrayReq createClient (fun client -> client.GetAccountGroupsByAccountGUID(accountGuid, int options))
+
+    let removeMembersFromAccount accountGuid accountGroupGuids =
+        Command.forReq createClient (fun client -> client.RemoveAccountGroupMembers(accountGuid, accountGroupGuids))
+
+type AddressGetOptions =
+| NewOnly = 1
+| IncludeAddressesOfInactiveAccounts = 2
+| ExcludeAddressesOfAccountsWithoutAccountNumber = 4
+| ExcludeAddressesOfAccountsWithoutCaseInWonSalesState = 8
+
+module Address =
+
+    let private createClient = Factory.createAddressClient
+
+    let add address =
+        Command.forReq createClient (fun client -> client.AddNewAddress(address))
+
+    let get guid =
+        Command.forReq createClient (fun client -> client.GetAddressByGUID(guid))
+
+    let getChanged accountGuid startDate (options : AddressGetOptions) =
+        Command.forArrayReq createClient (fun client -> client.GetAddressesChangedSince(accountGuid, startDate, int options))
+
+    // In wrong place!
+    let getBillingAddressOfOrganization =
+        Command.forReq createClient (fun client -> client.GetBillingAddress())
+
+    let getFirstBillingAddressOfAccount accountGuid =
+        Command.forReq createClient (fun client -> client.GetFirstAccountsBillingAddress(accountGuid))
+
+    let update address =
+        Command.forReq createClient (fun client -> client.UpdateAddress(address))
+
+module Company =
+
+    let private createClient = Factory.createCompanyClient
+
+    let get guid =
+        Command.forReq createClient (fun client -> client.GetCompanyByGUID(guid))
+
+module Industry =
+
+    let private createClient = Factory.createIndustryClient
+
+    let add industry =
+        Command.forReq createClient (fun client -> client.AddNewIndustry(industry))
+
+    let getAll =
+        Command.forArrayReq createClient (fun client -> client.GetIndustries())
