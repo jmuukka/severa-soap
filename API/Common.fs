@@ -11,8 +11,13 @@ module internal Option =
 
     let toNullableDateTime since =
         match since with
-        | Some value -> value
+        | Some value -> Nullable<DateTime>(value)
         | None -> Nullable<DateTime>()
+
+    let toNullableInt32 since =
+        match since with
+        | Some value -> Nullable<int>(value)
+        | None -> Nullable<int>()
 
 module Result =
 

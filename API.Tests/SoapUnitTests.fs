@@ -1,4 +1,4 @@
-module Mutex.Visma.Severa.SOAP.API.SeveraUnitTests
+module SoapUnitTests
 
 open Xunit
 open Mutex.Visma.Severa.SOAP.API
@@ -15,7 +15,7 @@ let ``invoke: when run does not throw an exception then it returns Ok value`` ()
     }
     let run (c : Client) = c.GetSomeString()
 
-    let actual = Severa.invoke client run
+    let actual = Soap.invoke client run
 
     Assert.equals (Ok value) actual
 
@@ -25,7 +25,7 @@ let ``invoke: when run throws an AuthenticationFailure exception then it returns
     let exn = System.ServiceModel.FaultException<AuthenticationFailure>(detail)
     let run _ = raise exn
 
-    let actual = Severa.invoke () run
+    let actual = Soap.invoke () run
 
     Assert.equals (Error Authentication) actual
 
@@ -35,7 +35,7 @@ let ``invoke: when run throws a NoPermissionFailure exception then it returns Pe
     let exn = System.ServiceModel.FaultException<NoPermissionFailure>(detail)
     let run _ = raise exn
 
-    let actual = Severa.invoke () run
+    let actual = Soap.invoke () run
 
     Assert.equals (Error Permission) actual
 
@@ -45,7 +45,7 @@ let ``invoke: when run throws an EntityNotFoundFailure exception then it returns
     let exn = System.ServiceModel.FaultException<EntityNotFoundFailure>(detail)
     let run _ = raise exn
 
-    let actual = Severa.invoke () run
+    let actual = Soap.invoke () run
 
     Assert.equals (Error EntityNotFound) actual
 
@@ -57,7 +57,7 @@ let ``invoke: when run throws a ValidationFailure exception then it returns Vali
     let exn = System.ServiceModel.FaultException<ValidationFailure>(detail)
     let run _ = raise exn
 
-    let actual = Severa.invoke () run
+    let actual = Soap.invoke () run
 
     Assert.equals (Error (Validation msg)) actual
 
@@ -69,7 +69,7 @@ let ``invoke: when run throws a GeneralFailure exception then it returns General
     let exn = System.ServiceModel.FaultException<GeneralFailure>(detail)
     let run _ = raise exn
 
-    let actual = Severa.invoke () run
+    let actual = Soap.invoke () run
 
     Assert.equals (Error (General msg)) actual
 
@@ -78,18 +78,18 @@ let ``invoke: when run throws an exception then it returns Exception Error`` () 
     let exn = System.NullReferenceException()
     let run _ = raise exn
 
-    let actual = Severa.invoke () run
+    let actual = Soap.invoke () run
 
     Assert.equals (Error (Exception exn)) actual
 
 [<Fact>]
 let ``invokeWithRetry: when invoke returns Ok value then it returns Ok value`` () =
-    let value = ""
+    let value = "x"
     let waitTime = 10
     let retryCount = 5
-    let invoke client run = Ok value
+    let invoke client run = Ok (run client)
 
-    let actual = Severa.invokeWithRetry waitTime retryCount invoke () ()
+    let actual = Soap.invokeWithRetry waitTime retryCount invoke () (fun client -> value)
 
     Assert.equals (Ok value) actual
 
@@ -97,51 +97,56 @@ let ``invokeWithRetry: when invoke returns Ok value then it returns Ok value`` (
 let ``invokeWithRetry: when invoke returns Authentication Error then it returns Authentication Error`` () =
     let waitTime = 10
     let retryCount = 5
-    let invoke client run = Error Authentication
+    let error = Error Authentication
+    let invoke client run = error
 
-    let actual = Severa.invokeWithRetry waitTime retryCount invoke () ()
+    let actual = Soap.invokeWithRetry waitTime retryCount invoke () (fun client -> "?")
 
-    Assert.equals (Error Authentication) actual
+    Assert.equals error actual
 
 [<Fact>]
 let ``invokeWithRetry: when invoke returns Permission Error then it returns Permission Error`` () =
     let waitTime = 10
     let retryCount = 5
-    let invoke client run = Error Permission
+    let error = Error Permission
+    let invoke client run = error
 
-    let actual = Severa.invokeWithRetry waitTime retryCount invoke () ()
+    let actual = Soap.invokeWithRetry waitTime retryCount invoke () (fun client -> "?")
 
-    Assert.equals (Error Permission) actual
+    Assert.equals error actual
 
 [<Fact>]
 let ``invokeWithRetry: when invoke returns EntityNotFound Error then it returns EntityNotFound Error`` () =
     let waitTime = 10
     let retryCount = 5
-    let invoke client run = Error EntityNotFound
+    let error = Error EntityNotFound
+    let invoke client run = error
 
-    let actual = Severa.invokeWithRetry waitTime retryCount invoke () ()
+    let actual = Soap.invokeWithRetry waitTime retryCount invoke () (fun client -> "?")
 
-    Assert.equals (Error EntityNotFound) actual
+    Assert.equals error actual
 
 [<Fact>]
 let ``invokeWithRetry: when invoke returns Validation Error then it returns Validation Error`` () =
     let waitTime = 10
     let retryCount = 5
-    let invoke client run = Error (Validation "")
+    let error = Error (Validation "x is required")
+    let invoke client run = error
 
-    let actual = Severa.invokeWithRetry waitTime retryCount invoke () ()
+    let actual = Soap.invokeWithRetry waitTime retryCount invoke () (fun client -> "?")
 
-    Assert.equals (Error (Validation "")) actual
+    Assert.equals error actual
 
 [<Fact>]
 let ``invokeWithRetry: when invoke returns General Error then it returns General Error`` () =
     let waitTime = 10
     let retryCount = 5
-    let invoke client run = Error (General "")
+    let error = Error (General "what happened?")
+    let invoke client run = error
 
-    let actual = Severa.invokeWithRetry waitTime retryCount invoke () ()
+    let actual = Soap.invokeWithRetry waitTime retryCount invoke () (fun client -> "?")
 
-    Assert.equals (Error (General "")) actual
+    Assert.equals error actual
 
 [<Fact>]
 let ``invokeWithRetry: when invoke returns Exception Error every time then it retries and returns Exception Error`` () =
@@ -154,7 +159,7 @@ let ``invokeWithRetry: when invoke returns Exception Error every time then it re
         Error (Exception exn)
     
     let started = System.DateTime.UtcNow
-    let actual = Severa.invokeWithRetry waitTime retryCount invoke () ()
+    let actual = Soap.invokeWithRetry waitTime retryCount invoke () (fun client -> "?")
     let ended = System.DateTime.UtcNow
     
     Assert.equals (Error (Exception exn)) actual
@@ -175,11 +180,11 @@ let ``invokeWithRetry: when invoke returns Exception Error first time and Ok sec
         if tryCount = 1 then
             Error (Exception exn)
         else
-            Ok ""
+            Ok "yes"
     
-    let actual = Severa.invokeWithRetry waitTime retryCount invoke () ()
+    let actual = Soap.invokeWithRetry waitTime retryCount invoke () (fun client -> "?")
     
-    Assert.equals (Ok "") actual
+    Assert.equals (Ok "yes") actual
     Assert.equals 2 tryCount
 
 [<Fact>]
@@ -188,7 +193,7 @@ let ``execute: when invoke returns Ok () then function returns Ok ()`` () =
     let invoke client run = Ok (run client)
     let context = Severa.context "api key"
     
-    let actual = Severa.execute createClient invoke context (fun _ -> ())
+    let actual = Soap.execute createClient invoke context (fun _ -> ())
     
     Assert.equals (Ok ()) actual
 
@@ -198,7 +203,7 @@ let ``executeReturnArray: when invoke returns Ok array then function returns Ok 
     let invoke client run = Ok (run client)
     let context = Severa.context "api key"
     
-    let actual = Severa.executeReturnArray createClient invoke context (fun _ -> [|""|])
+    let actual = Soap.executeReturnArray createClient invoke context (fun _ -> [|""|])
     
     Assert.equals (Ok [|""|]) actual
 
@@ -208,7 +213,7 @@ let ``executeReturnArray: when invoke returns Ok null array then function return
     let invoke client run = Ok (run client)
     let context = Severa.context "api key"
     
-    let actual = Severa.executeReturnArray createClient invoke context (fun _ -> null)
+    let actual = Soap.executeReturnArray createClient invoke context (fun _ -> null)
     
     Assert.equals (Ok [||]) actual
 
@@ -218,7 +223,7 @@ let ``executeReturnSingle: when invoke returns Ok string then function returns O
     let invoke client run = Ok (run client)
     let context = Severa.context "api key"
     
-    let actual = Severa.executeReturnSingle createClient invoke context (fun _ -> "")
+    let actual = Soap.executeReturnSingle createClient invoke context (fun _ -> "")
     
     Assert.equals (Ok "") actual
 
@@ -228,6 +233,6 @@ let ``executeReturnSingle: when invoke returns Ok null then function returns Ent
     let invoke client run = Ok (run client)
     let context = Severa.context "api key"
     
-    let actual = Severa.executeReturnSingle createClient invoke context (fun _ -> null)
+    let actual = Soap.executeReturnSingle createClient invoke context (fun _ -> null)
     
     Assert.equals (Error EntityNotFound) actual

@@ -12,13 +12,15 @@
     <Compile Include="ApiKey.fs" />
     <Compile Include="Assert.fs" />
     <Compile Include="ResultUnitTests.fs" />
-    <Compile Include="SeveraUnitTests.fs" />
-    <Compile Include="CoreTests.fs" />
+    <Compile Include="SoapUnitTests.fs" />
     <Compile Include="Common.fs" />
+    <Compile Include="CoreTests.fs" />
     <Compile Include="CustomerTests.fs" />
-    <Compile Include="WorkHourTests.fs" />
+    <Compile Include="SoapTests.fs" />
     <Compile Include="ReimbursedWorkHourTests.fs" />
+    <Compile Include="ProjectTests.fs" />
     <Compile Include="WorkdayInfoTests.fs" />
+    <Compile Include="WorkHourTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
