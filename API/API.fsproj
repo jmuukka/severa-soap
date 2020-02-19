@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Mutex.Visma.Severa.SOAP.API</AssemblyName>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>0.4</Version>
+    <Version>0.6</Version>
     <Authors>Jarmo Muukka, Mutex Oy</Authors>
     <Company>Mutex Oy</Company>
     <Product>Visma Severa SOAP API</Product>
