@@ -1,5 +1,7 @@
 ﻿namespace Mutex.Visma.Severa.SOAP.API
 
+open System
+
 type ActivityCategory =
 | Absences
 | CalendarEntry
@@ -14,12 +16,35 @@ type MemberStatus =
 | Tentative = 3
 | Declined = 4
 
+type ActivityInstanceCriteria = {
+    StartsAfter : DateTime option
+    StartsBefore : DateTime option
+    EndsAfter : DateTime option
+    EndsBefore : DateTime option
+    UserGuid : string
+    ActivityTypeGuid : string
+    CustomerGuid : string
+    ProjectGuid : string
+    FirstRow : int option
+    MaxRows : int option
+}
+
 module Activity =
 
     let private createClient = Factory.createActivityClient
 
-    let getInstances userGuid startsAfter startsBefore endsAfter endsBefore activityTypeGuid customerGuid projectGuid firstRow maxRows =
-        Command.forArrayReq createClient (fun client -> client.GetActivityInstances(userGuid, startsAfter, startsBefore, endsAfter, endsBefore, activityTypeGuid, customerGuid, projectGuid, firstRow, maxRows))
+    let getInstances criteria =
+        let parameters = criteria.UserGuid,
+                         Option.toNullableDateTime criteria.StartsAfter,
+                         Option.toNullableDateTime criteria.StartsBefore,
+                         Option.toNullableDateTime criteria.EndsAfter,
+                         Option.toNullableDateTime criteria.EndsBefore,
+                         criteria.ActivityTypeGuid,
+                         criteria.CustomerGuid,
+                         criteria.ProjectGuid,
+                         Option.toNullableInt32 criteria.FirstRow,
+                         Option.toNullableInt32 criteria.MaxRows
+        Command.forArrayReq createClient (fun client -> client.GetActivityInstances(parameters))
 
     let getByCriteria businessUnitGuid activityCategory startDate endDate =
         let activityCategory =
@@ -42,17 +67,17 @@ module Activity =
     let delete guid =
         Command.forReq createClient (fun client -> client.DeleteActivity(guid))
 
-    let getParticipants guid =
-        Command.forArrayReq createClient (fun client -> client.GetAllActivityParticipants(guid))
+    let getParticipants activityGuid =
+        Command.forArrayReq createClient (fun client -> client.GetAllActivityParticipants(activityGuid))
 
-    let getUserParticipants guid =
-        Command.forArrayReq createClient (fun client -> client.GetActivityUserParticipants(guid))
+    let getUserParticipants activityGuid =
+        Command.forArrayReq createClient (fun client -> client.GetActivityUserParticipants(activityGuid))
 
-    let getContactParticipants guid =
-        Command.forArrayReq createClient (fun client -> client.GetActivityContactParticipants(guid))
+    let getContactParticipants activityGuid =
+        Command.forArrayReq createClient (fun client -> client.GetActivityContactParticipants(activityGuid))
 
-    let getResourceParticipants guid =
-        Command.forArrayReq createClient (fun client -> client.GetActivityResourceParticipants(guid))
+    let getResourceParticipants activityGuid =
+        Command.forArrayReq createClient (fun client -> client.GetActivityResourceParticipants(activityGuid))
 
     let addUserParticipant activityGuid userGuid (memberStatus : MemberStatus) =
         Command.forReq createClient (fun client -> client.AddNewActivityUserParticipant(activityGuid, userGuid, byte memberStatus))

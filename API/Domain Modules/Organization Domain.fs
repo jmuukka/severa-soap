@@ -1,5 +1,10 @@
 ﻿namespace Mutex.Visma.Severa.SOAP.API
 
+module Organization =
+
+    let getBillingAddress =
+        Command.forReq Factory.createAddressClient (fun client -> client.GetBillingAddress())
+
 module BusinessUnit =
 
     let private createClient = Factory.createBusinessUnitClient

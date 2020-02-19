@@ -7,8 +7,8 @@ module AccessRightsProfile =
     let getAll =
         Command.forArrayReq createClient (fun client -> client.GetAllAccessRightsProfiles())
 
-    let getUsers guid =
-        Command.forArrayReq createClient (fun client -> client.GetUsersByAccessRightsProfileGUID(guid))
+    let getUsers profileGuid =
+        Command.forArrayReq createClient (fun client -> client.GetUsersByAccessRightsProfileGUID(profileGuid))
 
     let get guid =
         Command.forReq createClient (fun client -> client.GetAccessRightsProfileByGUID(guid))
@@ -26,11 +26,11 @@ module UserRights =
 
     let private createClient = Factory.createAccessRightsClient
 
-    let get guid =
-        Command.forReq createClient (fun client -> client.GetUserRightsByUserGUID(guid))
+    let get userGuid =
+        Command.forReq createClient (fun client -> client.GetUserRightsByUserGUID(userGuid))
 
-    let update guid userRights =
-        Command.forReq createClient (fun client -> client.UpdateUserRightsByUserGUID(guid, userRights))
+    let update userGuid userRights =
+        Command.forReq createClient (fun client -> client.UpdateUserRightsByUserGUID(userGuid, userRights))
 
 module Employment =
 
@@ -74,7 +74,7 @@ module User =
         let since = Option.toDateTime since
         Command.forArrayReq createClient (fun client -> client.GetUsersChangedSince(businessUnitGuid, since, int options))
 
-    let getChangedUsers since options =
+    let getChanged since options =
         getUsersChangedInBusinessUnit null since options 
 
     let get guid =

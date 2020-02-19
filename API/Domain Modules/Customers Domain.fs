@@ -51,12 +51,12 @@ module Customer =
 
     // Contacts of customer
 
-    let getContacts guid =
-        Command.forArrayReq Factory.createContactClient (fun client -> client.GetContactsByAccountGUID(guid))
+    let getContacts customerGuid =
+        Command.forArrayReq Factory.createContactClient (fun client -> client.GetContactsByAccountGUID(customerGuid))
 
-    let getChangedContacts guid since (options : ContactGetOptions) =
+    let getChangedContacts customerGuid since (options : ContactGetOptions) =
         let since = Option.toDateTime since
-        Command.forArrayReq Factory.createContactClient (fun client -> client.GetContactsChangedSince(guid, since, int options))
+        Command.forArrayReq Factory.createContactClient (fun client -> client.GetContactsChangedSince(customerGuid, since, int options))
 
 module Contact =
 
@@ -110,16 +110,17 @@ module Account =
         Command.forArrayReq createClient (fun client -> client.GetAccountsByInsertDate(startDate, endDate))
 
     let getChanged startDate (options : AccountGetOptions) =
+        let startDate = Option.toDateTime startDate
         Command.forArrayReq createClient (fun client -> client.GetAccountsChangedSince(startDate, int options))
 
-    let getChangedOpts startDate options =
-        Command.forArrayReq createClient (fun client -> client.GetAccountsChangedSinceOpts(startDate, options))
+    //let getChangedOpts startDate options =
+    //    Command.forArrayReq createClient (fun client -> client.GetAccountsChangedSinceOpts(startDate, options))
 
     let getAll index count options =
         Command.forArrayReq createClient (fun client -> client.GetAllAccounts(options, index, count))
 
-    let getHeadOfficeAddress guid =
-        Command.forReq createClient (fun client -> client.GetHeadOfficeAddressByAccountGUID(guid))
+    let getHeadOfficeAddress accountGuid =
+        Command.forReq createClient (fun client -> client.GetHeadOfficeAddressByAccountGUID(accountGuid))
 
     let update account =
         Command.forReq createClient (fun client -> client.UpdateAccount(account))
@@ -160,11 +161,8 @@ module Address =
         Command.forReq createClient (fun client -> client.GetAddressByGUID(guid))
 
     let getChanged accountGuid startDate (options : AddressGetOptions) =
+        let startDate = Option.toDateTime startDate
         Command.forArrayReq createClient (fun client -> client.GetAddressesChangedSince(accountGuid, startDate, int options))
-
-    // In wrong place!
-    let getBillingAddressOfOrganization =
-        Command.forReq createClient (fun client -> client.GetBillingAddress())
 
     let getFirstBillingAddressOfAccount accountGuid =
         Command.forReq createClient (fun client -> client.GetFirstAccountsBillingAddress(accountGuid))

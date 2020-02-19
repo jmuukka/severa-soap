@@ -55,13 +55,13 @@ module Project =
 
     // Phases of project
 
-    let getPhases guid =
-        PhaseInternal.getAllInProject guid
+    let getPhases projectGuid =
+        PhaseInternal.getAllInProject projectGuid
 
     // Project members
 
-    let getMembers guid =
-        Command.forArrayReq createClient (fun client -> client.GetCaseMemberUsersByCaseGUID(guid))
+    let getMembers projectGuid =
+        Command.forArrayReq createClient (fun client -> client.GetCaseMemberUsersByCaseGUID(projectGuid))
 
     let addMember projectGuid userGuid =
         Command.forReq createClient (fun client -> client.AddCaseMemberUser(projectGuid, userGuid))

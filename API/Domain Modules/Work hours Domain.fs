@@ -47,7 +47,7 @@ module WorkHour =
         let endDate = Option.toNullableDateTime endDate
         Command.forArrayReq createClient (fun client -> client.GetHourEntriesByDateAndUserGUID(businessUnitGuid, startDate, endDate, userGuid))
 
-    let getByProject invoke projectGuid startDate endDate =
+    let getByProject projectGuid startDate endDate =
         let startDate = Option.toNullableDateTime startDate
         let endDate = Option.toNullableDateTime endDate
         Command.forArrayReq createClient (fun client -> client.GetHourEntriesByCaseGUID(projectGuid, startDate, endDate))
